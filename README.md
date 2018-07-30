@@ -3,7 +3,7 @@ Gmetrix web  Scraping
 Install node.js
 install the following packages;
 For requist:
-  npm install requist
+  npm install request
   
   npm install cheerio
   
