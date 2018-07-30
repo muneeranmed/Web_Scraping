@@ -1,6 +1,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const XlsxPopulate = require('xlsx-populate');
+const e = require('node-each');
 // const fs = require('fs');
 const url = "https://gtmetrix.com/reports/whatismyip.host/NDrds3Lb";
 
@@ -25,21 +26,18 @@ request(url,function (err,response,html) {
 
     let $report_details_content  = $page_report_content_array[0].children().eq(1).children().eq(2).children("div.report-details-info").children().eq(1).children("div.report-details-value");
 
-    let url = $report_head.find("a.no-external").text();
+    let $url = $report_head.find("a.no-external").text();
 
     // let $report_info = "";
   let $report_info = $report_details_content.text().trim();
 
-    console.log("Url: "+url);
+    console.log("Url: "+$url);
 
     console.log("Location: "+ $report_info);
 
     //-----CODE FOR GETTING PAGE SPEED SCORE------//
-
     let Switch = function (ch) {
-
       switch (ch) {
-        
         case 'sprite-grade-A': return 'A';
                                 break;
         case 'sprite-grade-B': return 'B';
@@ -96,15 +94,18 @@ request(url,function (err,response,html) {
       $page_details.push($report_page_details.eq(index).find('span.report-page-detail-value').text());
 
     });
+    let $Full_loaded_time = $page_details[0];
+    let $Total_page_size = $page_details[1];
+    let $requests = $page_details[2];
 
-    console.log($page_details);
+    console.log("Full loaded Time: "+$Full_loaded_time);
+    console.log("Total page size: "+$Total_page_size);
+    console.log("Request: "+$requests);
 
     //-------------Page Speed Issuess --------------//
-
     let $report_tabs = $page_report_content_array[2].children().eq(1).children("div").children(".layout-cols-content").children("table").children("tbody");
-
     let $page_speed_array = [];
-
+    let $page_speed = "";
     let $rule_name,$rule_grade;
 
     $report_tabs.children("tr").each(function (index) {
@@ -122,15 +123,15 @@ request(url,function (err,response,html) {
 
          });
 
-         console.log("Page Speed: "+ $page_speed_array);
+         $page_speed = $page_speed_array;
 
-
+         let $page_speed_s = $page_speed.toString();
+         console.log("Page Speed: "+ $page_speed);
       //---------------------YSLOW_SPEED------------------//
 
       let $Yreport_tabs = $page_report_content_array[2].children().eq(2).children("div").children(".layout-cols-content").children("table").children("tbody");
-
       let $Yslow_speed_array = [];
-
+      let $Yslow_speed = "";
       let $Yrule_name,$Yrule_grade;
 
         $Yreport_tabs.children("tr").each(function (index) {
@@ -150,28 +151,13 @@ request(url,function (err,response,html) {
            }
 
           });
-
-          console.log("YSLow Speed: "+$Yslow_speed_array);
-
+          $Yslow_speed = $Yslow_speed_array;
+          console.log("YSLow Speed: "+$Yslow_speed);
+          let $Yslow_speed_s = $Yslow_speed.toString();
           console.log("----------Congrats! Muneer----------");
 
-          // fs.writeFile("output.csv");
-          // XlsxPopulate.fromBlankAsync()
 
-                  // .then(workbook => {
-
-                    // workbook.sheet(0).cell("A1").value([
-                                      // [1, 77, 3],
-                                      // [4, 6, 6],
-                                      // [7, 8, 9]
-                                    // ]);
-                      // const newSheet1 = workbook.addSheet('New 1');
-                      // return workbook.toFileAsync("./test2.xlsx");
-                    // console.log();
-
-                  // })
-                    // .catch(err => console.error(err));
-
+        
   }
 
 });
